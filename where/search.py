@@ -17,6 +17,12 @@ class Search:
     HOME = '~/'
     GLOBAL_CONF = '/etc'
 
+    CONF_PATHS = (
+        XDG_CONFIG_HOME,
+        GLOBAL_CONF,
+        HOME
+    )
+
     TYPE_CONF = 'conf'
     TYPE_LOG = 'conf'
 
@@ -34,10 +40,11 @@ class Search:
         return patterns
 
     def _search(self):
-        xdg_conf = self._get_pattern_dict(self.XDG_CONFIG_HOME)
-        matches = [re.match(self.name, x) for x in xdg_conf if re.match(self.name, x)]
-        if matches:
-            return matches, xdg_conf
+        for conf_path in self.CONF_PATHS:
+            dirs = self._get_pattern_dict(conf_path)
+            matches = [re.match(self.name, x) for x in dirs if re.match(self.name, x)]
+            if matches:
+                return matches, dirs
 
         # conf_path = os.path.join(self.XDG_CONFIG_HOME, self.name)
         # if os.path.exists(conf_path):
