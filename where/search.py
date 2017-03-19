@@ -26,14 +26,26 @@ class Search:
             self.search_type = self.TYPE_CONF
         self.result = None
 
+    def _get_pattern_dict(self, path):
+        patterns = dict()
+        for dir in os.listdir(path):
+            stripped = ''.join(x for x in dir if dir.isalpha())
+            patterns[stripped] = dir
+        return patterns
+
     def _search(self):
-        conf_path = os.path.join(self.XDG_CONFIG_HOME, self.name)
-        if os.path.exists(conf_path):
-            files = os.listdir(conf_path)
-            for ext in self.CONF_EXTS:
-                for file in files:
-                    if file.endswith(ext):
-                        return os.path.join(conf_path, file)
+        xdg_conf = self._get_pattern_dict(self.XDG_CONFIG_HOME)
+        matches = [re.match(self.name, x) for x in xdg_conf if re.match(self.name, x)]
+        if matches:
+            return matches, xdg_conf
+
+        # conf_path = os.path.join(self.XDG_CONFIG_HOME, self.name)
+        # if os.path.exists(conf_path):
+        #     files = os.listdir(conf_path)
+        #     for ext in self.CONF_EXTS:
+        #         for file in files:
+        #             if file.endswith(ext):
+        #                 return os.path.join(conf_path, file)
 
     def get_result(self):
         if self.search_type == self.TYPE_CONF:
