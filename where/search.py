@@ -23,6 +23,10 @@ class Search:
         HOME
     )
 
+    LOG_PATHS = (
+        '/var/log'
+    )
+
     TYPE_CONF = 'conf'
     TYPE_LOG = 'conf'
 
@@ -40,7 +44,11 @@ class Search:
         return patterns
 
     def _search(self):
-        for conf_path in self.CONF_PATHS:
+        if self.search_type == self.TYPE_CONF:
+            confs_path = self.CONF_PATHS
+        if self.search_type == self.TYPE_CONF:
+            confs_path = self.CONF_PATHS
+        for conf_path in confs_path:
             dirs = self._get_pattern_dict(conf_path)
             matches = [re.match(self.name, x) for x in dirs if re.match(self.name, x)]
             if matches:
@@ -56,7 +64,9 @@ class Search:
 
     def get_result(self):
         if self.search_type == self.TYPE_CONF:
-            self.result = self._search()
+            matches, dirs = self._search()
+        if self.search_type == self.TYPE_LOG:
+
 
     def format_result(self):
         return "Configuration file path is : {}".format(self.result)
