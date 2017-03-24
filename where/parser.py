@@ -1,7 +1,7 @@
 import argparse
 
 
-from search import Search
+from where.search import Search
 
 
 if __name__ == '__main__':
