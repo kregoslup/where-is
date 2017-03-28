@@ -1,5 +1,6 @@
 import os
 import re
+from sys import stdout
 
 
 class Search:
@@ -30,9 +31,9 @@ class Search:
     TYPE_CONF = 'conf'
     TYPE_LOG = 'conf'
 
-    def __init__(self, name, type=None):
+    def __init__(self, name, search_type=None):
         self.name = ''.join(x for x in name if x.isalnum())
-        if not type:
+        if not search_type:
             self.search_type = self.TYPE_CONF
         self.result = None
 
@@ -45,6 +46,8 @@ class Search:
         return patterns
 
     def _search(self):
+        matches = []
+        dirs = dict()
         if self.search_type == self.TYPE_CONF:
             confs_path = self.CONF_PATHS
         if self.search_type == self.TYPE_CONF:
@@ -52,11 +55,10 @@ class Search:
         for conf_path in confs_path:
             dirs = self._get_pattern_dict(conf_path)
             matches = [re.match(self.name, x) for x in dirs.values() if re.match(self.name, x)]
-            if matches:
-                return matches, dirs
+        return matches, dirs
 
     def get_result(self):
         matches, dirs = self._search()
-
-    def format_result(self):
-        return "Configuration file path is : {}".format(self.result)
+        stdout.write("Found {} matches".format(len(matches)))
+        for match in matches:
+            stdout.write("Configuration file path may be : {}".format(match))
